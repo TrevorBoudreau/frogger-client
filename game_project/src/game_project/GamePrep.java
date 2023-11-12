@@ -43,7 +43,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		backgroundLabel.setLocation( 0, 0 );
 		
 		//setup frog (user sprite)
-		frog = new frog(100, GameProperties.SCREEN_HEIGHT - 150, 100, 90, "frog.png");
+		frog = new frog(400, GameProperties.SCREEN_HEIGHT - 200, 100, 90, "frog.png");
 		
 		frogLabel = new JLabel();
 		frogImage = new ImageIcon(
@@ -287,21 +287,20 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	@Override
 	public void keyReleased(KeyEvent e) {
 		
+		Boolean logFlag = false;
+		
+		for (int i = 0; i < log1.length; i++) {
+			if (log1[i].getFrogOnLog() == true || log2[i].getFrogOnLog() == true || log3[i].getFrogOnLog() == true) {
+				logFlag = true;
+				break;
+			}
+		}
+		
 		//stop game if frog makes a collision
 		for (int i = 0; i < vehicle1.length; i++) {
 			
-			if (vehicle1[i].getMoving() == false || vehicle2[i].getMoving() == false || vehicle3[i].getMoving() == false) {
-				
-				for (int j = 0; j < vehicle1.length; j++) {
-					vehicle1[j].stopThread();
-					vehicle2[j].stopThread();
-					vehicle3[j].stopThread();
-					log1[j].stopThread();
-					log2[j].stopThread();
-					log3[j].stopThread();
-				}
-			
-				restartButton.setVisible(true);
+			if (vehicle1[i].getMoving() == false || vehicle2[i].getMoving() == false || vehicle3[i].getMoving() == false || logFlag == false) {
+				stopGame();
 			}
 			
 		}
@@ -318,6 +317,22 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			}
 		}
 		
+	
+	public void stopGame() {
+		for (int j = 0; j < vehicle1.length; j++) {
+			vehicle1[j].stopThread();
+			vehicle2[j].stopThread();
+			vehicle3[j].stopThread();
+			log1[j].stopThread();
+			log2[j].stopThread();
+			log3[j].stopThread();
+			frogLabel.setIcon( 
+					new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
+			);
+		}
+	
+		restartButton.setVisible(true);
+	}
 	
 
 	public void restartGame() {

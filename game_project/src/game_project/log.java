@@ -12,6 +12,8 @@ public class log extends sprite implements Runnable{
 	private frog frog;
 	private JLabel frogLabel;
 	
+	private Boolean frogOnLog;
+	
 	private int step;
 	private int direction;
 	
@@ -40,8 +42,9 @@ public class log extends sprite implements Runnable{
 		this.moving = moving;
 		// TODO Auto-generated constructor stub
 	}
+	
 	//start function to call the thread
-		public void startThread() {
+	public void startThread() {
 			
 			//if thread already started, do not run again
 			System.out.println("start thread." + this.moving);
@@ -50,6 +53,7 @@ public class log extends sprite implements Runnable{
 				this.moving = true;
 				t = new Thread(this, "log Thread");
 				t.start();
+			
 			}
 	}
 	public void stopThread() {
@@ -91,11 +95,13 @@ public class log extends sprite implements Runnable{
 				new ImageIcon( getClass().getResource(this.image) ) 
 		);
 		
+		this.frogOnLog = true;
+		
 		while (this.moving) {
 			//moving code
 			int x = this.x;
 			
-			//determine direction of vehicle
+			//determine direction of log
 			if (direction == 1) {
 				x += step;
 			} else if (direction == 2){
@@ -112,13 +118,14 @@ public class log extends sprite implements Runnable{
 			}
 			
 			this.setX(x); //this.x = x; do not directly because rectangle doesn't update
-						
 			logLabel.setLocation(this.x,this.y);
 			
-			//detect collision between frog && vehicle
-			this.detectCollision();
+			//detect collision between frog && log
+			//this.detectCollision();
+			if (frog.getY() < 400 && frog.getY() >= 100) {this.detectCollision();}
 			
 			//System.out.println("x + y: " + this.x + "," + this.y);
+			
 			
 			try {
 				Thread.sleep(200);
@@ -133,18 +140,41 @@ public class log extends sprite implements Runnable{
 	}
 	
 	private void detectCollision() {
-		if ( r.intersects(frog.getRectangle() ) ) {
-			System.out.println("COLLISION!");
-			this.moving = false;
 			
-			this.frogLabel.setIcon( 
-					new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
-			);
+			if ( (r.intersects(frog.getRectangle() ) ) == false ) {
 				
-			this.stopThread(); //stop active thread upon collision
-		}
+				//System.out.println("SUNK!");
+				
+				this.frogOnLog = false;
+				
+				/*
+				this.moving = false;
+				
+				this.frogLabel.setIcon( 
+						new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
+				);
+					
+				this.stopThread(); //stop active thread upon collision
+				*/
+			} else {this.frogOnLog = true;}
+			
+			if (frogOnLog == true) {
+				
+				if (direction == 1) {
+					frog.setX( frog.getX() + step);
+					frogLabel.setLocation(frog.getX(), frog.getY() );
+				}
+				else if (direction == 2) {
+					frog.setX( frog.getX() - step);
+					frogLabel.setLocation(frog.getX(), frog.getY() );
+				}
+				
+			}
+		
 	}
 	
-	
+	public Boolean getFrogOnLog() {
+		return frogOnLog;
+	}
 
 }
