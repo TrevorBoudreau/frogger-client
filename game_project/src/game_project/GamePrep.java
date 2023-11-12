@@ -27,6 +27,10 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	
 	private JButton restartButton;
 	
+	//score variables
+	private JLabel scoreLabel;
+	private int score;
+	
 	public GamePrep() {
 		//set up the screen
 		setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
@@ -41,6 +45,12 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		backgroundLabel.setIcon( backgroundImage );
 		backgroundLabel.setSize( GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT );
 		backgroundLabel.setLocation( 0, 0 );
+		
+		//set up score label
+		score = 0;
+		scoreLabel = new JLabel("Score: " + score);
+		scoreLabel.setSize( 150, 100 );
+		scoreLabel.setLocation(0,0);
 		
 		//setup frog (user sprite)
 		frog = new frog(400, GameProperties.SCREEN_HEIGHT - 200, 100, 90, "frog.png");
@@ -199,6 +209,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			add(logLabel2[i]);
 			add(logLabel3[i]);
 		}
+		add(scoreLabel);
 		add(backgroundLabel);
 		
 		
@@ -233,7 +244,6 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	@Override
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
 		
 		//get current position (will need to be updated later)
 		int x = frog.getX();
@@ -282,6 +292,8 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			frog.setY(y);
 
 			frogLabel.setLocation(frog.getX(), frog.getY() );
+			
+			System.out.println("x + y: " + frog.getX() + "," + frog.getY());
 		}
 
 	@Override
@@ -301,9 +313,17 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			
 			if (vehicle1[i].getMoving() == false || vehicle2[i].getMoving() == false || vehicle3[i].getMoving() == false || logFlag == false) {
 				stopGame();
+				break;
 			}
 			
 		}
+		
+		if (frog.getY() == 0) {
+			System.out.println("END ZONE FLAG");
+			winGame();
+			}
+		
+		
 		
 	}
 
@@ -330,6 +350,28 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 					new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
 			);
 		}
+		
+		if (score > 0 ) {
+			score = score - 50;
+			scoreLabel.setText("Score: " + score);
+		}
+	
+		restartButton.setVisible(true);
+	}
+	
+	public void winGame() {
+		
+		for (int j = 0; j < vehicle1.length; j++) {
+			vehicle1[j].stopThread();
+			vehicle2[j].stopThread();
+			vehicle3[j].stopThread();
+			log1[j].stopThread();
+			log2[j].stopThread();
+			log3[j].stopThread();
+		}
+		
+		score = score + 50;
+		scoreLabel.setText("Score: " + score);
 	
 		restartButton.setVisible(true);
 	}
