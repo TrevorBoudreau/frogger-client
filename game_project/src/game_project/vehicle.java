@@ -43,7 +43,7 @@ public class vehicle extends sprite implements Runnable{
 	public void run() {
 		// TODO Auto-generated method stub
 		
-		System.out.println("Thread Started");
+		//System.out.println("Thread Started");
 		
 		//set the icons to default
 		this.frogLabel.setIcon( 
@@ -91,7 +91,7 @@ public class vehicle extends sprite implements Runnable{
 			
 		}
 		
-		System.out.println("Thread Stopped");
+		//System.out.println("Thread Stopped");
 		
 	}
 	
@@ -99,7 +99,7 @@ public class vehicle extends sprite implements Runnable{
 	public void startThread() {
 		
 		//if thread already started, do not run again
-		System.out.println("start thread." + this.moving);
+		//System.out.println("start thread." + this.moving);
 		if ( !this.moving ) {
 			
 			this.moving = true;

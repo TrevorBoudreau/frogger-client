@@ -46,15 +46,15 @@ public class log extends sprite implements Runnable{
 	//start function to call the thread
 	public void startThread() {
 			
-			//if thread already started, do not run again
-			System.out.println("start thread." + this.moving);
-			if ( !this.moving ) {
+	//if thread already started, do not run again
+	//System.out.println("start thread." + this.moving);
+	if ( !this.moving ) {
 				
-				this.moving = true;
-				t = new Thread(this, "log Thread");
-				t.start();
+		this.moving = true;
+		t = new Thread(this, "log Thread");
+		t.start();
 			
-			}
+	}
 	}
 	public void stopThread() {
 		this.moving = false;
@@ -84,7 +84,7 @@ public class log extends sprite implements Runnable{
 		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		
-		System.out.println("Thread Started");
+		//System.out.println("Thread Started");
 		
 		//set the icons to default
 		this.frogLabel.setIcon( 
@@ -135,7 +135,7 @@ public class log extends sprite implements Runnable{
 			
 		}
 		
-		System.out.println("Thread Stopped");
+		//System.out.println("Thread Stopped");
 		
 	}
 	

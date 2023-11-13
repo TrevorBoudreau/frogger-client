@@ -6,6 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,7 +51,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		backgroundLabel.setLocation( 0, 0 );
 		
 		//set up score label
-		score = 0;
+		score = retrieveScore();
 		scoreLabel = new JLabel("Score: " + score);
 		scoreLabel.setSize( 150, 100 );
 		scoreLabel.setLocation(0,0);
@@ -351,9 +355,14 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			);
 		}
 		
+		
+		
 		if (score > 0 ) {
 			score = score - 50;
-			scoreLabel.setText("Score: " + score);
+			
+			updateScore(score);
+			
+			scoreLabel.setText("Score: " + retrieveScore() );
 		}
 	
 		restartButton.setVisible(true);
@@ -371,7 +380,10 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		}
 		
 		score = score + 50;
-		scoreLabel.setText("Score: " + score);
+		
+		updateScore(score);
+		
+		scoreLabel.setText("Score: " + retrieveScore() );
 	
 		restartButton.setVisible(true);
 	}
@@ -434,6 +446,89 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		restartButton.setVisible(false);
 		
 	}
+	
+	public void updateScore(int newScore) {
+		
+		Connection conn = null;
+		
+		Statement stmt = null;
+		
+		//create connection to db
+		try {
+			String dbURL = "jdbc:sqlite:products.db";
+			conn = DriverManager.getConnection(dbURL);
+			
+			if (conn != null) {
+				
+				stmt = conn.createStatement();
+				
+				String sql = "";
+				
+				sql = "CREATE TABLE IF NOT EXISTS SCORECARD (ID INTEGER PRIMARY KEY AUTOINCREMENT, SCORE INT NOT NULL)";
+				stmt.executeUpdate(sql);
+				//conn.commit();
+				
+				//Insert score
+				sql = "INSERT INTO SCORECARD (SCORE) VALUES ("+newScore+")";
+				stmt.executeUpdate(sql);
+				
+				//sql = "UPDATE SCORECARD SET SCORE="+newScore+" WHERE id = 1";
+				//stmt.executeUpdate(sql);
+				
+				conn.close();
+				
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	public int retrieveScore() {
+		
+		//create connection to dbd
+		
+		Connection conn = null;
+		
+		Statement stmt = null;
+		
+		int newScore = 0;
+		int rowCount = 0;
+		
+		//create connection to db
+		try {
+			String dbURL = "jdbc:sqlite:products.db";
+			conn = DriverManager.getConnection(dbURL);
+			
+			if (conn != null) {
+				
+				stmt = conn.createStatement();
+				
+				String sql = "";
+				
+				sql = "SELECT * FROM SCORECARD ORDER BY ID DESC LIMIT 1";
+				ResultSet rs = stmt.executeQuery(sql);
+				newScore = rs.getInt("SCORE");
+				
+				conn.close();
+				
+			}
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return newScore;
+		
+	}
+	
+	
+	
+	
 	
 }
 
