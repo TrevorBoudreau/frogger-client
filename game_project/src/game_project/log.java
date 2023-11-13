@@ -28,13 +28,11 @@ public class log extends sprite implements Runnable{
 	
 	public log() {
 		super();
-		//vehicleLabel = new JLabel();
 		// TODO Auto-generated constructor stub
 	}
 	public log(Boolean moving) {
 		super();
 		this.moving = moving;
-		//vehicleLabel = new JLabel();
 	}
 	public log(int x, int y, int height, int width, String image, Boolean moving) {
 		
@@ -47,7 +45,6 @@ public class log extends sprite implements Runnable{
 	public void startThread() {
 			
 	//if thread already started, do not run again
-	//System.out.println("start thread." + this.moving);
 	if ( !this.moving ) {
 				
 		this.moving = true;
@@ -81,7 +78,6 @@ public class log extends sprite implements Runnable{
 	
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
 		// TODO Auto-generated method stub
 		
 		//System.out.println("Thread Started");
@@ -124,8 +120,6 @@ public class log extends sprite implements Runnable{
 			//this.detectCollision();
 			if (frog.getY() < 400 && frog.getY() >= 100) {this.detectCollision();}
 			
-			//System.out.println("x + y: " + this.x + "," + this.y);
-			
 			
 			try {
 				Thread.sleep(200);
@@ -135,27 +129,14 @@ public class log extends sprite implements Runnable{
 			
 		}
 		
-		//System.out.println("Thread Stopped");
-		
 	}
 	
 	private void detectCollision() {
 			
 			if ( (r.intersects(frog.getRectangle() ) ) == false ) {
 				
-				//System.out.println("SUNK!");
-				
 				this.frogOnLog = false;
 				
-				/*
-				this.moving = false;
-				
-				this.frogLabel.setIcon( 
-						new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
-				);
-					
-				this.stopThread(); //stop active thread upon collision
-				*/
 			} else {this.frogOnLog = true;}
 			
 			if (frogOnLog == true) {

@@ -23,14 +23,12 @@ public class vehicle extends sprite implements Runnable{
 	
 	public vehicle() {
 		super();
-		//vehicleLabel = new JLabel();
 		// TODO Auto-generated constructor stub
 	}
 	
 	public vehicle(Boolean moving) {
 		super();
 		this.moving = moving;
-		//vehicleLabel = new JLabel();
 	}
 
 	public vehicle(int x, int y, int height, int width, String image, Boolean moving) {
@@ -42,8 +40,6 @@ public class vehicle extends sprite implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
-		//System.out.println("Thread Started");
 		
 		//set the icons to default
 		this.frogLabel.setIcon( 
@@ -81,8 +77,6 @@ public class vehicle extends sprite implements Runnable{
 			//detect collision between frog && vehicle
 			this.detectCollision();
 			
-			//System.out.println("x + y: " + this.x + "," + this.y);
-			
 			try {
 				Thread.sleep(200);
 			} catch (Exception e) {
@@ -91,15 +85,12 @@ public class vehicle extends sprite implements Runnable{
 			
 		}
 		
-		//System.out.println("Thread Stopped");
-		
 	}
 	
 	//start function to call the thread
 	public void startThread() {
 		
 		//if thread already started, do not run again
-		//System.out.println("start thread." + this.moving);
 		if ( !this.moving ) {
 			
 			this.moving = true;

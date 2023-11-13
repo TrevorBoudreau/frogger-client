@@ -35,6 +35,8 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	private JLabel scoreLabel;
 	private int score;
 	
+	private Boolean canMove;
+	
 	public GamePrep() {
 		//set up the screen
 		setSize(GameProperties.SCREEN_WIDTH, GameProperties.SCREEN_HEIGHT);
@@ -66,14 +68,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		frogLabel.setIcon( frogImage );
 		frogLabel.setSize( frog.getWidth(), frog.getHeight() );
 		frogLabel.setLocation( frog.getX(), frog.getY() );
-
-		/* (commented out for now as it is redundant with constructor used above)
-		frog.setX (100);
-		frog.setY(GameProperties.SCREEN_HEIGHT - 200);
-		frog.setWidth(90);
-		frog.setHeight(100);
-		frog.setImage("frog.png");
-		*/
+		canMove = true;
 		
 		//restart button
 		restartButton = new JButton("Restart");
@@ -216,8 +211,8 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		add(scoreLabel);
 		add(backgroundLabel);
 		
-		
 		content.addKeyListener(this);
+
 		content.setFocusable(true); //allows keys to always work within window
 		
 		// start threads
@@ -229,8 +224,6 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 			log2[i].startThread();
 			log3[i].startThread();
 		}
-		
-		
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
@@ -249,62 +242,66 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
-		//get current position (will need to be updated later)
-		int x = frog.getX();
-		int y = frog.getY();
-		
-		//detect direction & modify coordinates
-			if ( e.getKeyCode()==KeyEvent.VK_UP) {
-				
-				y -= GameProperties.FROG_STEP;
-				
-				if (y + frog.getHeight() < 0) {
-					y = GameProperties.SCREEN_HEIGHT;
-				}
-				
-			} else if ( e.getKeyCode()==KeyEvent.VK_DOWN) {
-				
-				y += GameProperties.FROG_STEP;
-				
-				if (y >= GameProperties.SCREEN_HEIGHT) {
-					y = -1 * frog.getHeight();
-				}
-				
-			} else if ( e.getKeyCode()==KeyEvent.VK_LEFT) {
-		
-				x -= GameProperties.FROG_STEP;
-				
-				if (x + frog.getWidth() < 0) {
-					x = GameProperties.SCREEN_WIDTH;
-				}
-				
-			} else if ( e.getKeyCode()==KeyEvent.VK_RIGHT) {
-				
-				x += GameProperties.FROG_STEP;
-				
-				if (x >= GameProperties.SCREEN_WIDTH) {
-					x = -1 * frog.getWidth();
-				}
-				
-			} else {
-				System.out.println("Invalid Operation");
-				return;
-			}
+		if (canMove == true) {
+			//get current position (will need to be updated later)
+			int x = frog.getX();
+			int y = frog.getY();
 			
-			//set the new coordinates in object
-			frog.setX(x);
-			frog.setY(y);
+			//detect direction & modify coordinates
+				if ( e.getKeyCode()==KeyEvent.VK_UP) {
+					
+					y -= GameProperties.FROG_STEP;
+					
+					if (y + frog.getHeight() < 0) {
+						y = GameProperties.SCREEN_HEIGHT;
+					}
+					
+				} else if ( e.getKeyCode()==KeyEvent.VK_DOWN) {
+					
+					y += GameProperties.FROG_STEP;
+					
+					if (y >= GameProperties.SCREEN_HEIGHT) {
+						y = -1 * frog.getHeight();
+					}
+					
+				} else if ( e.getKeyCode()==KeyEvent.VK_LEFT) {
+			
+					x -= GameProperties.FROG_STEP;
+					
+					if (x + frog.getWidth() < 0) {
+						x = GameProperties.SCREEN_WIDTH;
+					}
+					
+				} else if ( e.getKeyCode()==KeyEvent.VK_RIGHT) {
+					
+					x += GameProperties.FROG_STEP;
+					
+					if (x >= GameProperties.SCREEN_WIDTH) {
+						x = -1 * frog.getWidth();
+					}
+					
+				} else {
+					System.out.println("Invalid Operation");
+					return;
+				}
+				
+				//set the new coordinates in object
+				frog.setX(x);
+				frog.setY(y);
 
-			frogLabel.setLocation(frog.getX(), frog.getY() );
-			
-			System.out.println("x + y: " + frog.getX() + "," + frog.getY());
+				frogLabel.setLocation(frog.getX(), frog.getY() );
+				
+				System.out.println("x + y: " + frog.getX() + "," + frog.getY());
 		}
+		
+	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		
 		Boolean logFlag = false;
 		
+		//check that frog is colliding with one log out of 12, flip flag if true
 		for (int i = 0; i < log1.length; i++) {
 			if (log1[i].getFrogOnLog() == true || log2[i].getFrogOnLog() == true || log3[i].getFrogOnLog() == true) {
 				logFlag = true;
@@ -316,7 +313,9 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		for (int i = 0; i < vehicle1.length; i++) {
 			
 			if (vehicle1[i].getMoving() == false || vehicle2[i].getMoving() == false || vehicle3[i].getMoving() == false || logFlag == false) {
-				stopGame();
+				if (canMove == true) {
+					stopGame();
+				}
 				break;
 			}
 			
@@ -324,10 +323,11 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		
 		if (frog.getY() == 0) {
 			System.out.println("END ZONE FLAG");
-			winGame();
+			
+			if (canMove == true) {
+				winGame();
 			}
-		
-		
+		}
 		
 	}
 
@@ -343,6 +343,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		
 	
 	public void stopGame() {
+		canMove = false; //prevent frog from moving until game restarts
 		for (int j = 0; j < vehicle1.length; j++) {
 			vehicle1[j].stopThread();
 			vehicle2[j].stopThread();
@@ -354,8 +355,6 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 					new ImageIcon( getClass().getResource("/images/red_frog.png") ) 
 			);
 		}
-		
-		
 		
 		if (score > 0 ) {
 			score = score - 50;
@@ -369,7 +368,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 	}
 	
 	public void winGame() {
-		
+		canMove = false; //prevent frog from moving until game restarts
 		for (int j = 0; j < vehicle1.length; j++) {
 			vehicle1[j].stopThread();
 			vehicle2[j].stopThread();
@@ -385,13 +384,14 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		
 		scoreLabel.setText("Score: " + retrieveScore() );
 	
-		restartButton.setVisible(true);
+		restartButton.setVisible(true); 
 	}
 	
 
 	public void restartGame() {
+		canMove = true; // allow frog to move
 		//reset frog and frog label position
-		frog.setX(100);
+		frog.setX(400);
 		frog.setY(GameProperties.SCREEN_HEIGHT - 200);
 		frogLabel.setLocation( frog.getX(), frog.getY() );
 		
@@ -471,10 +471,7 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 				//Insert score
 				sql = "INSERT INTO SCORECARD (SCORE) VALUES ("+newScore+")";
 				stmt.executeUpdate(sql);
-				
-				//sql = "UPDATE SCORECARD SET SCORE="+newScore+" WHERE id = 1";
-				//stmt.executeUpdate(sql);
-				
+
 				conn.close();
 				
 			}
@@ -496,7 +493,6 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		Statement stmt = null;
 		
 		int newScore = 0;
-		int rowCount = 0;
 		
 		//create connection to db
 		try {
@@ -525,10 +521,6 @@ public class GamePrep extends JFrame implements KeyListener, ActionListener{
 		return newScore;
 		
 	}
-	
-	
-	
-	
 	
 }
 
